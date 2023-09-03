@@ -5,9 +5,10 @@ from torch.utils.data import DataLoader
 from torch.cuda import is_available
 from utils import diagnostics
 from tqdm.auto import tqdm
+from pathlib import Path
 
 
-def load_dataset(folder: str, batch_size: int = 64, img_channels: int = 3, device='cpu', num_workers: int = 0,
+def load_dataset(folder: str | Path, batch_size: int = 64, img_channels: int = 3, device='cpu', num_workers: int = 0,
                  pin_memory: bool = False):
     transforms = Compose([
         ToTensor(),

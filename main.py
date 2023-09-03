@@ -1,8 +1,8 @@
 
 if __name__ == '__main__':
-    from code import loading_data
-    from code.training import *
-    from code.utils import diagnostics
+    from wgan_code import loading_data
+    from wgan_code.training import *
+    from wgan_code.utils import diagnostics
     import torch
     from torch.optim import Adam
     from pathlib import Path
