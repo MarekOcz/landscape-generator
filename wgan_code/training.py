@@ -59,7 +59,8 @@ def load_gan_to_train(generator: Module, gen_optim: Optimizer, critic: Module, c
 def wgan_gp_train_loop(generator: Module, gen_optim: Optimizer, critic: Module, critic_optim: Optimizer, epochs: int,
                        train_data: DataLoader, critic_iterations: int, device: str | device, z_dim: int = 100,
                        lda: int = 10, model_save_path: Path = None, load_path: Path = None, epoch_start: int = 0,
-                       start_batch_idx: int = None, save_interval: int = 10, writer: SummaryWriter = None, start_from_load=True, step_interval: int  =10):
+                       start_batch_idx: int = None, save_interval: int = 10, writer: SummaryWriter = None, start_from_load=True, step_interval: int=10,
+                       save_num: int = 0):
     if load_path is not None:
         if start_from_load:
             epoch_start, start_batch_idx = load_gan_to_train(generator, gen_optim, critic, critic_optim, load_path)
@@ -103,14 +104,20 @@ def wgan_gp_train_loop(generator: Module, gen_optim: Optimizer, critic: Module, 
             generator_loss.backward()
             gen_optim.step()
             train_loop.set_description(f"Gen: {generator_loss:.3f} Critic: {critic_loss:.3f}")
-            if batch_idx % save_interval == 0:
+            if batch_idx % step_interval == 0:
                 generator.eval()
+                critic.eval()
                 with inference_mode():
                     fake = generator(fixed_noise)
                     img_grid = make_grid(fake, normalize=True)
                     writer.add_image("Generated images", img_grid, global_step=step)
-                    save_gan_to_train(generator, gen_optim, critic, critic_optim, epoch, batch_idx, model_save_path)
                     step += 1
+            if batch_idx % save_interval == 0:
+                generator.eval()
+                critic.eval()
+                save_num += 1
+                save_gan_to_train(generator, gen_optim, critic, critic_optim, epoch, batch_idx, model_save_path / f"{save_num}.tar")
+
 
 
 def init_weights(model: Module, mean: float = 0.0, standard_deviation: float = 0.02):

@@ -3,7 +3,6 @@ from torchvision.datasets import ImageFolder
 from torchvision.transforms import ToTensor, Compose, Normalize
 from torch.utils.data import DataLoader
 from torch.cuda import is_available
-from utils import diagnostics
 from tqdm.auto import tqdm
 from pathlib import Path
 
